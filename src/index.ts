@@ -4,3 +4,4 @@ function hello(name: string): string {
 
 console.log(hello("World"));
 console.log(hello("TypeScript"));
+console.log(hello("User"));
