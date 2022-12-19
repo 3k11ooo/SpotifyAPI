@@ -14,6 +14,7 @@ import path from 'path'
 
 // import function 
 import { login, callback, refresh_token } from './authorization'
+import { getTopTracks/*, search_tracks*/} from './analyze'
 
 const port = 3000; // port
 
@@ -39,7 +40,11 @@ app.get('/login', login);
 
 app.get('/callback', callback);
 
-app.get('/refresh_token', refresh_token)
+app.get('/refresh_token', refresh_token);
+
+//app.get('/search_tracks', search_tracks);
+
+app.get('/get_top_tracks', getTopTracks);
 
 
 console.log(`This app listening at http://localhost:${port}`);

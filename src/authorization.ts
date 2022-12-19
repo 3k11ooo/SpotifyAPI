@@ -1,11 +1,12 @@
 import request from 'request'
 import querystring from 'querystring'
 import { Buffer } from 'buffer'
+import { access } from 'fs';
 
 const client_id: string = '482f2f80a66345e4810d441f7f8a0c5a'; // Your client id
 const client_secret: string = '454c5ba931654cdbbbbb6db043a5700f'; // Your secre
 const redirect_uri: string = `http://localhost:3000/callback`; // Your redirect uri
-const scopes: string = 'user-read-private user-read-email user-library-read playlist-read user-read-recently-played'; // Your scopes
+const scopes: string = 'user-read-private user-read-email user-library-read playlist-read user-read-recently-played user-top-read'; // Your scopes
 
 const stateKey = 'spotify_auth_state';
 
@@ -43,13 +44,15 @@ export function callback(req:any, res:any) : void{
   const code = req.query.code || null;
   const state = req.query.state || null;
   const storedState = req.cookies ? req.cookies[stateKey] : null;
+  let token : string = '';
 
   if (state === null || state !== storedState) {
     res.redirect('/#' +
       querystring.stringify({
         error: 'state_mismatch'
       }));
-  } else {
+  } 
+  else {
     res.clearCookie(stateKey);
     const authOptions = {
       url: 'https://accounts.spotify.com/api/token',
@@ -70,44 +73,54 @@ export function callback(req:any, res:any) : void{
         const access_token = body.access_token;
         const refresh_token = body.refresh_token;
 
-        const options = {
-          url: 'https://api.spotify.com/v1/me',
-          headers: { 'Authorization': 'Bearer ' + access_token },
-          json: true
-        };
+        // const options = {
+        //   url: 'https://api.spotify.com/v1/me',
+        //   headers: { 'Authorization': 'Bearer ' + access_token },
+        //   json: true
+        // };
 
         // use the access token to access the Spotify Web API
+        // request.get(options, mydata);
+        // function mydata(error:any, response:any, body:any) {
+        //   // const data = body.display_name;
+        //   // console.log('login user: ',data);
+        // }
+
+        const options: any = {
+          url: `https://api.spotify.com/v1/me/top/tracks?limit=1`,
+          headers: { 'Authorization': 'Bearer ' + access_token,},
+          json: true
+        };
+        // console.log(options);
         request.get(options, mydata);
         function mydata(error:any, response:any, body:any) {
-          const data = body.display_name;
-          console.log('login user: ',data);
+          const data = body.items;
+          // console.log(body.href);
+          console.log(data);
         }
-        
 
         // we can also pass the token to the browser to make requests from there
         res.redirect(
-          // querystring.stringify({
-          //   access_token: access_token,
-          //   refresh_token: refresh_token
-          // })
-          redirect_uri
+          '/#' +
+          querystring.stringify({
+            access_token: access_token,
+            refresh_token: refresh_token
+          })
         );
-        res.send(
-          {
-          'access_token': access_token,
-          'refresh_token': refresh_token
-          }
-        );
+        // console.log('breakpoint');
+        // res.send({
+        //   'access_token': access_token
+        // });
+        // return access_token;
       } 
       else {
         res.send({
           error: 'invalid_token'
         });
-        res.redirect(
-          redirect_uri
-        //   querystring.stringify({
-        //     error: 'invalid_token'
-        // })
+        res.redirect('/#' +
+          querystring.stringify({
+            error: 'invalid_token'
+        })
         );
       }
     });
