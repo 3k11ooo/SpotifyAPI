@@ -77,7 +77,7 @@ export function callback(req:any, res:any) : void{
 
 
 
-    //     // we can also pass the token to the browser to make requests from there
+       // we can also pass the token to the browser to make requests from there
         res.redirect(
           '/#' +
           querystring.stringify({
@@ -86,11 +86,13 @@ export function callback(req:any, res:any) : void{
           })
         );
       } 
+      else{
         res.redirect('/#' +
           querystring.stringify({
             error: 'invalid_token'
         })
         );
+      }
     });
   }
 }
