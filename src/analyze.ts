@@ -22,15 +22,16 @@ import { Buffer } from 'buffer'
 //   );
 // }
 export function getTopTracks(req:any, res:any) {
+  //console.log(req.hash);
   //const url = location.href;
   const refresh_token: any = req.query.refresh_token;
   const access_token: any = req.query.access_token;
-  const options: any = {
-    url: `https://api.spotify.com/v1/me/player/recently-played?`,
-    headers: { 'Authorization': 'Bearer ' + access_token,
-     'limit': 3 },
-    json: true
-  };
+  // const options: any = {
+  //   url: `https://api.spotify.com/v1/me/player/recently-played?`,
+  //   headers: { 'Authorization': 'Bearer ' + access_token,
+  //    'limit': 3 },
+  //   json: true
+  // };
   res.redirect(
     '/#' +
     'result'
@@ -40,9 +41,9 @@ export function getTopTracks(req:any, res:any) {
     // })
   );
   
-  request.post(options, function(error:any, response:any, body:any){
-    console.log(body);
-  });
+  // request.post(options, function(error:any, response:any, body:any){
+  //   console.log(body);
+  // });
 
   // console.log('res>>>>>>>\n');
   // console.log(res.app);

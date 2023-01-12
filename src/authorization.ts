@@ -1,7 +1,8 @@
 import request from 'request'
 import querystring from 'querystring'
 import { Buffer } from 'buffer'
-import { access } from 'fs';
+import { access } from 'fs'
+// import axios from 'axios'
 
 const client_id: string = '482f2f80a66345e4810d441f7f8a0c5a'; // Your client id
 const client_secret: string = '454c5ba931654cdbbbbb6db043a5700f'; // Your secre
@@ -70,36 +71,13 @@ export function callback(req:any, res:any) : void{
     request.post(authOptions, function(error, response, body) {
       if (!error && response.statusCode === 200) {
 
+
         const access_token = body.access_token;
         const refresh_token = body.refresh_token;
 
-        // const options = {
-        //   url: 'https://api.spotify.com/v1/me',
-        //   headers: { 'Authorization': 'Bearer ' + access_token },
-        //   json: true
-        // };
 
-        // use the access token to access the Spotify Web API
-        // request.get(options, mydata);
-        // function mydata(error:any, response:any, body:any) {
-        //   // const data = body.display_name;
-        //   // console.log('login user: ',data);
-        // }
 
-        const options: any = {
-          url: `https://api.spotify.com/v1/me/top/tracks?limit=1`,
-          headers: { 'Authorization': 'Bearer ' + access_token,},
-          json: true
-        };
-        // console.log(options);
-        request.get(options, mydata);
-        function mydata(error:any, response:any, body:any) {
-          const data = body.items;
-          // console.log(body.href);
-          console.log(data);
-        }
-
-        // we can also pass the token to the browser to make requests from there
+    //     // we can also pass the token to the browser to make requests from there
         res.redirect(
           '/#' +
           querystring.stringify({
@@ -107,22 +85,12 @@ export function callback(req:any, res:any) : void{
             refresh_token: refresh_token
           })
         );
-        // console.log('breakpoint');
-        // res.send({
-        //   'access_token': access_token
-        // });
-        // return access_token;
       } 
-      else {
-        res.send({
-          error: 'invalid_token'
-        });
         res.redirect('/#' +
           querystring.stringify({
             error: 'invalid_token'
         })
         );
-      }
     });
   }
 }
@@ -150,4 +118,3 @@ export function refresh_token(req:any, res:any) : void{
     }
   });
 }
-
