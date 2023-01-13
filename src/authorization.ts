@@ -2,6 +2,7 @@ import request from 'request'
 import querystring from 'querystring'
 import { Buffer } from 'buffer'
 import { access } from 'fs'
+import { Authorized } from 'routing-controllers';
 // import axios from 'axios'
 
 const client_id: string = '482f2f80a66345e4810d441f7f8a0c5a'; // Your client id
@@ -100,6 +101,7 @@ export function callback(req:any, res:any) : void{
 // refresh token
 export function refresh_token(req:any, res:any) : void{
   // requesting access token from refresh token
+  //console.log(req);
   const refresh_token = req.query.refresh_token;
   const authOptions = {
     url: 'https://accounts.spotify.com/api/token',
@@ -112,11 +114,19 @@ export function refresh_token(req:any, res:any) : void{
   };
 
   request.post(authOptions, function(error, response, body) {
+    //console.log(body);
     if (!error && response.statusCode === 200) {
       const access_token = body.access_token;
+      // console.log("success re-get access token", access_token)
       res.send({
         'access_token': access_token
       });
+    }
+    else{
+      console.log(error);
+      // res.send({
+        
+      // });
     }
   });
 }

@@ -2,19 +2,6 @@
 const loginButton = document.getElementById('login');
 const refreshButton = document.getElementById('loggedin');
 
-function log(){
-  console.log('click');
-};
-function getHashParams() {
-  var hashParams = {};
-  var e, r = /([^&;=]+)=?([^&;]*)/g,
-      q = window.location.hash.substring(1);
-  while ( e = r.exec(q)) {
-    hashParams[e[1]] = decodeURIComponent(e[2]);
-  }
-  return hashParams;
-};
-
 // const hashTag = hash.search('#') + 1;
 
 // if(hashTag > 0){ // hashが存在しない
@@ -43,11 +30,21 @@ function getHashParams() {
 
   const params = getHashParams();
 
-  const access_token = params.access_token,
+  let access_token = params.access_token,
         refresh_token = params.refresh_token,
         error = params.error;
 
+  if(params.access_token == null){
+    loginButton.style.display = 'block';
+    refreshButton.style.display = 'none';
+  }
+  else{
+    loginButton.style.display = 'none';
+    refreshButton.style.display = 'block';
+  }
+
         
+// トラック検索
 function search_tracks(){
   if (error) {
     alert('There was an error during the authentication');
@@ -122,11 +119,43 @@ function search_tracks(){
       // render initial screen
       // $('#login').show();
       // $('#loggedin').hide();
-      loginButton.style.display = 'block';
-      refreshButton.style.display = 'none';
     }
   }
 }
+// リフレッシュトークン取得
+function reget_token(){
+  //console.log(refresh_token);
+  const refresh = fetch(
+    `refresh_token?refresh_token=${refresh_token}`,
+    {
+      // method: 'GET',
+      // body: {
+      // 'refresh_token': refresh_token
+      // }
+    }
+  );
+  refresh.then(async data => {
+    //console.log(response);
+    const data_1 = await data.json();
+    // console.log(data_1);
+    access_token = data_1.access_token;
+  });
+  refresh.catch(error => {
+    console.error(error);
+    alert("リフレッシュトークン取得失敗");
+  });
+}
+// 
 async function drowData(data){
 
 }
+// hash
+function getHashParams() {
+  var hashParams = {};
+  var e, r = /([^&;=]+)=?([^&;]*)/g,
+      q = window.location.hash.substring(1);
+  while ( e = r.exec(q)) {
+    hashParams[e[1]] = decodeURIComponent(e[2]);
+  }
+  return hashParams;
+};
